@@ -1,0 +1,2 @@
+model_checkpoint_path: "C:\\Users\\kamis\\Documents\\DeepLearning Projects\\EmotionRecognitionCNN\\SavedModels\\model.tfl"
+all_model_checkpoint_paths: "C:\\Users\\kamis\\Documents\\DeepLearning Projects\\EmotionRecognitionCNN\\SavedModels\\model.tfl"
