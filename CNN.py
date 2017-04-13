@@ -73,7 +73,8 @@ def predit(X):
     model = getsavednetwork()
     X = X.transpose((0, 2, 3, 1))
     pred = model.predict(X)
-    print("Prediction : ", pred)
+    print
+    "Prediction : ", pred
 
 
 if __name__ == "__main__":
