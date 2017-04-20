@@ -30,6 +30,7 @@ def checkispresent():
 
 def getData():
     if checkispresent() is False:
+        print("Creating .npy files")
         X_train, Y_train, X_valid, Y_valid, X_test, Y_test = getcsvdata()
 
         N, D = X_train.shape
@@ -68,6 +69,9 @@ def getcsvdata():
         else:
             row = line.split(',')
             usage = row[2].rstrip()  # to remove '\n' at the end
+
+            if row[0] != '0':
+                row[0] = int(row[0]) - 1
             if usage == 'Training':
                 Y_train.append(int(row[0]))
                 X_train.append([int(p) for p in row[1].split()])
@@ -82,8 +86,8 @@ def getcsvdata():
     X_valid, Y_valid = np.array(X_valid) / 255.0, np.array(Y_valid)
     X_test, Y_test = np.array(X_test) / 255.0, np.array(Y_test)
 
-    Y_train = dense_to_one_hot(Y_train)
-    Y_valid = dense_to_one_hot(Y_valid)
-    Y_test = dense_to_one_hot(Y_test)
+    Y_train = dense_to_one_hot(Y_train, 6)
+    Y_valid = dense_to_one_hot(Y_valid, 6)
+    Y_test = dense_to_one_hot(Y_test, 6)
 
     return X_train, Y_train, X_valid, Y_valid, X_test, Y_test
