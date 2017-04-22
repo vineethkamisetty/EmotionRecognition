@@ -1,5 +1,4 @@
 import sys
-
 import tensorflow
 import tflearn
 from tflearn import *
@@ -7,24 +6,31 @@ from util import getData
 
 EMOTIONS = ['angry', 'fearful', 'happy', 'sad', 'surprised', 'neutral']
 
+layers = []
+
 
 def network():
     network = input_data(shape=[None, 48, 48, 1])
 
+    network = conv_2d(network, 32, 3, activation='relu')
+    network = conv_2d(network, 32, 5, activation='relu')
+    network = max_pool_2d(network, 2, strides=2)
+    network = dropout(network, 0.3)
+    network = local_response_normalization(network)
+    network = conv_2d(network, 64, 3, activation='relu')
     network = conv_2d(network, 64, 5, activation='relu')
     network = max_pool_2d(network, 2, strides=2)
-    network = dropout(network, 0.5)
+    network = dropout(network, 0.3)
     network = local_response_normalization(network)
-    network = conv_2d(network, 64, 5, activation='relu')
-    network = max_pool_2d(network, 2, strides=2)
-    network = dropout(network, 0.5)
-    network = local_response_normalization(network)
+    network = conv_2d(network, 128, 3, activation='relu')
     network = conv_2d(network, 128, 5, activation='relu')
-    network = dropout(network, 0.5)
+    network = max_pool_2d(network, 2, strides=2)
+    network = dropout(network, 0.3)
+    network = local_response_normalization(network)
     network = fully_connected(network, 1024, activation='relu')
-    network = dropout(network, 0.5)
+    network = dropout(network, 0.7)  # need to change if needed 0.7 -> 0.5
     network = fully_connected(network, 1024, activation='relu')
-    network = dropout(network, 0.5)
+    network = dropout(network, 0.7)  # need to change if needed 0.7 -> 0.5
     network = fully_connected(network, len(EMOTIONS), activation='softmax')
 
     network = regression(network,
@@ -40,7 +46,7 @@ def getrawnetwork():
     return network()
 
 
-def getsavednetwork(savepath='./SavedModels/model_ab_d.tfl'):
+def getsavednetwork(savepath='./SavedModels/model_A.tfl'):
     model = getrawnetwork()
     model.load(savepath)
     return model
@@ -59,15 +65,15 @@ def train(cont=False):
     model.fit(
         X_train, Y_train,
         validation_set=(X_valid, Y_valid),
-        n_epoch=20,
+        n_epoch=50,
         batch_size=100,
         shuffle=True,
         show_metric=True,
         snapshot_step=200,
         snapshot_epoch=True,
-        run_id='emotion_recognition_ab_d'
+        run_id='emotion_recognition_A'
     )
-    model.save('./SavedModels/model_ab_d.tfl')
+    model.save('./SavedModels/model_A.tfl')
 
 
 def test():
@@ -81,14 +87,14 @@ def test():
     print('Test accuarcy: %0.4f%%' % (score[0] * 100))
 
 
-def predit(X):
+def predict(X, val=True):
     tensorflow.reset_default_graph()
 
     model = getsavednetwork()
-    X = X.transpose((0, 2, 3, 1))
+    if val:
+        X = X.transpose((0, 2, 3, 1))
     pred = model.predict(X)
-    print
-    "Prediction : ", pred
+    print("Prediction : ", pred)
 
 
 if __name__ == "__main__":

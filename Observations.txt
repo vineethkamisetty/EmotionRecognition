@@ -240,12 +240,12 @@ model_b0_d: - Need to Test
 model_ba ; model_c ; model_ca ; model_cb ::: Useless Models
  
 Modified models : 
-model_2b0 ; model_2b_d    [1]: 32, 3:5 ; 64, 3:5 ; 128, 3:5 ; 1024 ; 1024 [model_2b0 : 20 epochs done!!] -- DONE!! NEED TO DO MORE
+model_2b0 ; model_2b_d    [1]: 32, 3:5 ; 64, 3:5 ; 128, 3:5 ; 1024 ; 1024 [model_2b0 : 20 epochs done!!] -- DONE!! NEED TO DO MORE   [NEED TO RUN AGAIN]
 model_a0_d                [2]: 32, 5 ; 64, 5 ; 128, 5 ; 1024 ; 1024 [2hr] -- TAKING TIME TO REACH proper accuracy!!!
 model_a1                  [x]: 64, 5 ; 64, 5 ; 128, 5 ; 1024  [NOT TESTING - TAKES TOO MUCH TIME]
 model_a2_d                [6]: 64, 5 ; 64, 5 ; 128, 4 ; 3072  [LAST ONE TO TEST - LOGS NOT CLEAR]
 model_ab_d                [5]: 64, 5 ; 64, 5 ; 128, 5 ; 1024 ; 1024 [2hr]
-model_ac                  [3]: 64, 5 ; 64, 5 ; 64, 5 ; 128, 4 ; 128, 4 ; 3072 [2:45hr][Can test : 45 epochs already done!!] - MIGHT HAVE REACHED SATURATION!!!
+model_ac                  [3]: 64, 5 ; 64, 5 ; 64, 5 ; 128, 4 ; 128, 4 ; 3072 [2:45hr][Can test : 45 epochs already done!!] - MIGHT HAVE REACHED SATURATION!!! [NEED TO RUN AGAIN]
 model_b_d [same as 1]     [x]: 32, 3:5 ; 64, 3:5 ; 128, 3:5 ; 1024 ; 1024 
 model_b0_d [similar as 1] [4]: 32, 3:5 ; 64, 3:5 ; 128, 3:5 ; 3072 [1:45hr] 
 
