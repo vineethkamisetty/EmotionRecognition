@@ -30,21 +30,21 @@ def network_model():
     return model
 
 
-def getrawnetwork():
+def get_raw_network_model():
     """
     :return: returns the un-trained network
     """
     return network_model()
 
 
-def getsavednetwork(savepath='./SavedModels/model_D.tfl'):
+def get_saved_network_model(savepath='./SavedModels/model_D.tfl'):
     """
     Loads specified network weights in the path
     :param savepath: path of the saved model. Needed to load the model weights for predicting and to continue the 
     training of model
     :return: returns the model with weights
     """
-    model = getrawnetwork()
+    model = get_raw_network_model()
     model.load(savepath)
     return model
 
@@ -62,9 +62,9 @@ def train(cont=False):
 
     tensorflow.reset_default_graph()  # to reset the model graph. problem with loading the weights
     if cont:
-        model = getsavednetwork()  # need to change back to getrawnetwork()
+        model = get_saved_network_model()  # need to change back to getrawnetwork()
     else:
-        model = getrawnetwork()
+        model = get_raw_network_model()
     model.fit(
         x_train, y_train,
         validation_set=(x_valid, y_valid),
@@ -90,7 +90,7 @@ def test():
 
     tensorflow.reset_default_graph()
 
-    model = getsavednetwork()
+    model = get_saved_network_model()
     score = model.evaluate(x_test, y_test, batch_size=50)
     print('Test accuracy: %0.4f%%' % (score[0] * 100))
 
@@ -103,7 +103,7 @@ def predict(x):
     """
     tensorflow.reset_default_graph()
 
-    model = getsavednetwork()
+    model = get_saved_network_model()
     x = x.transpose((0, 2, 3, 1))
     prediction = model.predict(x)
     print("Prediction : ", prediction)
