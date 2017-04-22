@@ -20,6 +20,19 @@ def network_model():
     '''
     copy/import models from final_Models.txt or write your model
     '''
+    conv_1 = conv_2d(network, 64, 5, activation='relu', bias=False)
+    # Residual blocks
+    res_1 = residual_bottleneck(conv_1, 3, 16, 64)
+    res_2 = residual_bottleneck(res_1, 1, 32, 128, downsample=True)
+    res_3 = residual_bottleneck(res_2, 2, 32, 128)
+    res_4 = residual_bottleneck(res_3, 1, 64, 256, downsample=True)
+    res_5 = residual_bottleneck(res_4, 2, 64, 256)
+    network = batch_normalization(res_5)
+    network = activation(network, 'relu')
+    network = global_avg_pool(network)
+    # Regression
+    fc_1 = fully_connected(network, 3072, activation='relu')
+    network = fully_connected(fc_1, len(EMOTIONS), activation='softmax')
 
     network = regression(network,
                          optimizer='adam',
@@ -37,7 +50,7 @@ def get_raw_network_model():
     return network_model()
 
 
-def get_saved_network_model(savepath='./SavedModels/model_D.tfl'):
+def get_saved_network_model(savepath='./SavedModels/model_resnet/model_resnet.tfl'):
     """
     Loads specified network weights in the path
     :param savepath: path of the saved model. Needed to load the model weights for predicting and to continue the 
@@ -68,15 +81,15 @@ def train(cont=False):
     model.fit(
         x_train, y_train,
         validation_set=(x_valid, y_valid),
-        n_epoch=50,
-        batch_size=100,
+        n_epoch=10,
+        batch_size=50,
         shuffle=True,
         show_metric=True,
         snapshot_step=200,
         snapshot_epoch=True,
-        run_id='emotion_recognition_D'
+        run_id='emotion_recognition_resnet'
     )
-    model.save('./SavedModels/model_D.tfl')
+    model.save('./SavedModels/model_resnet/model_resnet.tfl')
 
 
 def test():
