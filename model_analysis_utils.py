@@ -31,11 +31,15 @@ def prediction_matrix(model, X_train, Y_train):
     X_train = X_train.transpose((0, 2, 3, 1))
     print("start prediction")
     y_prob = []
-    for i in range(0,100): # change iterations : each batch takes 100 images
-        batch = model.predict(X_train[i*100:(i+1)*100])
+
+    # runs for 28,000 images ( 280 * 100 batch size)
+    batch_size = 100
+    iterations = 280
+    for i in range(0,iterations): # change iterations : each batch takes 100 images
+        batch = model.predict(X_train[i*batch_size:(i+1)*batch_size])
         for batch_element in batch:
             y_prob.append(batch_element)
-        print("images processed ",(i+1)*100)
+        print("images predicted ",(i+1)*batch_size)
 
     print("end prediction")
 
@@ -44,11 +48,13 @@ def prediction_matrix(model, X_train, Y_train):
     y_true = [np.argmax(true) for true in Y_train]
 
     #make sure the size of y_true and y_predicted to be same
-    plot_prediction_matrix(y_true[0:100*(i+1)], y_predicted, cmap=plt.cm.Oranges)
+    plot_prediction_matrix(y_true[0:batch_size*(iterations)], y_predicted, cmap=plt.cm.Oranges)
 
 def softmax_graph_for_sample_images(model, X_test, Y_test):
-    images_train = np.load("./RafD/RaFD_images_train.npy")
-    pixels = images_train[105][0] / 255
+
+    # RaFD image data set
+    #images_train = np.load("./RafD/RaFD_images_train.npy")
+    #pixels = images_train[105][0] / 255
 
     index = 15
     pixels = X_test[index]
@@ -59,6 +65,7 @@ def softmax_graph_for_sample_images(model, X_test, Y_test):
     EMOTIONS = ['angry', 'fearful', 'happy', 'sad', 'surprised', 'neutral']
     fig = plt.figure(figsize=(12, 12))
     ax = fig.add_subplot(6,6,1)
+    #predicted emotion
     #plt.xlabel(EMOTIONS[result[0].index(max(result[0]))], color='blue', fontsize=14)
     plt.xlabel("True label:"+EMOTIONS[y_true], color='blue', fontsize=14)
 
@@ -94,7 +101,7 @@ def top2_accuracy(model, X_test, Y_test):
         second_max = np.argmax(y_prob[i])
         if max_index == np.argmax(Y_test[i]) or second_max == np.argmax(Y_test[i]):
             count = count + 1
-    print("Top 2 Test Accuracy : ",count/len(y_prob)*100)
+    print("Top 2 Test Accuracy : ",(count/3500)*100)
 
 if __name__ == "__main__":
 
