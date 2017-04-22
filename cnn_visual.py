@@ -82,6 +82,8 @@ if test:
 
 def plot(layer, stimuli):
     units = sess.run(layer, feed_dict={x: stimuli})
+    # print(units)
+    # print("units shape : ", units.shape)
     colormaps = True
     filters = units.shape[3]
     fig = plt.figure(figsize=(20, 20))
@@ -98,5 +100,5 @@ def plot(layer, stimuli):
 
 
 image = X_valid[0:1, :, :, :].transpose((0, 2, 3, 1))
-print("image shape : ", image.shape)
+# print("image shape : ", image.shape)
 plot(conv_2, image)

@@ -6,7 +6,7 @@ from util import getData
 
 EMOTIONS = ['angry', 'fearful', 'happy', 'sad', 'surprised', 'neutral']
 
-layers = []
+unit_values = []
 
 
 def network_model():
@@ -37,7 +37,7 @@ def getrawnetwork():
     return network_model()
 
 
-def getsavednetwork(savepath='./SavedModels/model_A.tfl'):
+def getsavednetwork(savepath='./SavedModels/model_D.tfl'):
     """
     Loads specified network weights in the path
     :param savepath: path of the saved model. Needed to load the model weights for predicting and to continue the 
@@ -56,7 +56,7 @@ def train(cont=False):
     network from starting
     :return: None
     """
-    x_train, y_train, x_valid, y_valid, y_test, y_test = getData()  # need to train on different data sets
+    x_train, y_train, x_valid, y_valid, y_test, y_test = getData()
     x_train = x_train.transpose((0, 2, 3, 1))
     x_valid = x_valid.transpose((0, 2, 3, 1))
 
@@ -74,9 +74,9 @@ def train(cont=False):
         show_metric=True,
         snapshot_step=200,
         snapshot_epoch=True,
-        run_id='emotion_recognition_A'
+        run_id='emotion_recognition_D'
     )
-    model.save('./SavedModels/model_A.tfl')
+    model.save('./SavedModels/model_D.tfl')
 
 
 def test():
