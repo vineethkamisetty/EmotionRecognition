@@ -110,19 +110,6 @@ def predict(x):
     return prediction
 
 
-def visual():
-    sess = tensorflow.Session()
-    init = tensorflow.global_variables_initializer()
-    sess.run(init)
-    x_train, y_train, x_valid, y_valid, x_test, y_test = getData()  # need to train on different data sets
-
-    image = x_valid[0:1, :, :, :].transpose((0, 2, 3, 1))
-    print("image shape : ", image.shape)
-    model, layers = getsavednetwork()
-    print(layers)
-    units = sess.run(layers[1], feed_dict={model.x: image})
-
-
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         train()
