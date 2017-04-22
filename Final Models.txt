@@ -1,0 +1,93 @@
+Final Models :
+
+model_A (model_2b0): - V
+    network = conv_2d(network, 32, 3, activation='relu')
+    network = conv_2d(network, 32, 5, activation='relu')
+    network = max_pool_2d(network, 2, strides=2)
+    network = dropout(network, 0.3)
+    network = local_response_normalization(network)
+    network = conv_2d(network, 64, 3, activation='relu')
+    network = conv_2d(network, 64, 5, activation='relu')
+    network = max_pool_2d(network, 2, strides=2)
+    network = dropout(network, 0.3)
+    network = local_response_normalization(network)
+    network = conv_2d(network, 128, 3, activation='relu')
+    network = conv_2d(network, 128, 5, activation='relu') 
+    network = max_pool_2d(network, 2, strides=2)
+    network = dropout(network, 0.3)
+    network = local_response_normalization(network)
+    network = fully_connected(network, 1024, activation='relu')
+    network = dropout(network, 0.7)  # need to change if needed 0.7 -> 0.5
+    network = fully_connected(network, 1024, activation='relu')
+    network = dropout(network, 0.7)  # need to change if needed 0.7 -> 0.5
+    network = fully_connected(network, len(EMOTIONS), activation='softmax')
+
+model_B (model_a0_d): - S
+    network = conv_2d(network, 32, 5, activation='relu')
+    network = max_pool_2d(network, 2, strides=2)
+    network = dropout(network, 0.3)
+    network = local_response_normalization(network)
+    network = conv_2d(network, 64, 5, activation='relu')
+    network = max_pool_2d(network, 2, strides=2)
+    network = dropout(network, 0.3)
+    network = local_response_normalization(network)
+    network = conv_2d(network, 128, 5, activation='relu')
+    network = dropout(network, 0.3)
+    network = local_response_normalization(network)
+    network = fully_connected(network, 1024, activation='relu')
+    network = dropout(network, 0.5)
+    network = fully_connected(network, 1024, activation='relu')
+    network = dropout(network, 0.5)
+    network = fully_connected(network, len(EMOTIONS), activation='softmax')
+
+model_C (model_ab_d): - S
+    network = conv_2d(network, 64, 5, activation='relu')
+    network = max_pool_2d(network, 2, strides=2)
+    network = dropout(network, 0.5)
+    network = local_response_normalization(network)
+    network = conv_2d(network, 64, 5, activation='relu')
+    network = max_pool_2d(network, 2, strides=2)
+    network = dropout(network, 0.5)
+    network = local_response_normalization(network)
+    network = conv_2d(network, 128, 5, activation='relu')
+    network = dropout(network, 0.5)
+    network = fully_connected(network, 1024, activation='relu')
+    network = dropout(network, 0.5)
+    network = fully_connected(network, 1024, activation='relu')
+    network = dropout(network, 0.5)
+    network = fully_connected(network, len(EMOTIONS), activation='softmax')
+
+model_D (model_ac): - V - DONE for 50 epochs : 57% training and 51% validation
+    network = conv_2d(network, 64, 5, activation='relu')
+    network = max_pool_2d(network, 3, strides=2)
+    network = conv_2d(network, 64, 5, activation='relu')
+    network = max_pool_2d(network, 3, strides=2)
+    network = dropout(network, 0.5)
+    network = conv_2d(network, 64, 5, activation='relu')
+    network = max_pool_2d(network, 3, strides=2)
+    network = conv_2d(network, 128, 4, activation='relu')
+    network = max_pool_2d(network, 3, strides=2)
+    network = conv_2d(network, 128, 4, activation='relu')
+    network = dropout(network, 0.5)
+    network = fully_connected(network, 3072, activation='relu')
+    network = fully_connected(network, len(EMOTIONS), activation='softmax')
+
+model_resnet : Almost Done!!
+    net = tflearn.input_data(shape=[None, 48, 48, 1])
+    net = tflearn.conv_2d(net, 64, 5, activation='relu', bias=False)
+    # Residual blocks
+    net = tflearn.residual_bottleneck(net, 3, 16, 64)
+    net = tflearn.residual_bottleneck(net, 1, 32, 128, downsample=True)
+    net = tflearn.residual_bottleneck(net, 2, 32, 128)
+    net = tflearn.residual_bottleneck(net, 1, 64, 256, downsample=True)
+    net = tflearn.residual_bottleneck(net, 2, 64, 256)
+    net = tflearn.batch_normalization(net)
+    net = tflearn.activation(net, 'relu')
+    net = tflearn.global_avg_pool(net)
+    # Regression
+    net = tflearn.fully_connected(net, 3072, activation='relu')
+    net = tflearn.fully_connected(net, len(EMOTIONS), activation='softmax')
+
+
+
+
