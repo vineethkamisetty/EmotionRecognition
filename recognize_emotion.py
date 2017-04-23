@@ -39,7 +39,7 @@ if __name__ == "__main__":
     emojis.append(cv2.imread('./emojis/' + emotion + '.png', -1))
 
   # load the saved network
-  model = getsavednetwork()
+  model = get_saved_network_model()
 
   while True:
     ret, frame = video_capture.read()

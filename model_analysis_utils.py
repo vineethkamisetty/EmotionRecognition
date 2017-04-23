@@ -34,7 +34,7 @@ def prediction_matrix(model, X_train, Y_train):
 
     # runs for 28,000 images ( 280 * 100 batch size)
     batch_size = 100
-    iterations = 280
+    iterations = 35
     for i in range(0,iterations): # change iterations : each batch takes 100 images
         batch = model.predict(X_train[i*batch_size:(i+1)*batch_size])
         for batch_element in batch:
@@ -105,11 +105,11 @@ def top2_accuracy(model, X_test, Y_test):
 
 if __name__ == "__main__":
 
-    model = getsavednetwork();
+    model = get_saved_network_model();
     X_train, Y_train, X_valid, Y_valid, X_test, Y_test = getData()
 
     # final prediction confusion matrix across 6 emotions
-    prediction_matrix(model, X_train, Y_train)
+    prediction_matrix(model, X_test, Y_test)
 
     # Evaluating top:2 accuracy
     top2_accuracy(model, X_test, Y_test)
