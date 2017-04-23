@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from CNN import *
+from cnn import *
 
 EMOTIONS = ['angry','fearful', 'happy', 'sad', 'surprised', 'neutral']
 FACE_PIXELS = 48

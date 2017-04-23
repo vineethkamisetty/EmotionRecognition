@@ -1,5 +1,5 @@
 import numpy as np
-from CNN import *
+from cnn import *
 from util import getData
 
 from sklearn.metrics import confusion_matrix
