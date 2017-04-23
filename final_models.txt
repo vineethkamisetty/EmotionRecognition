@@ -52,7 +52,7 @@ model_C (model_ab_d):
     conv_3 = conv_2d(network, 128, 5, activation='relu')
     network = dropout(conv_3, 0.5)
     fc_1 = fully_connected(network, 1024, activation='relu')
-    network = dropout(fc_2, 0.5)
+    network = dropout(fc_1, 0.5)
     fc_2 = fully_connected(network, 1024, activation='relu')
     network = dropout(fc_2, 0.5)
     network = fully_connected(network, len(EMOTIONS), activation='softmax')
