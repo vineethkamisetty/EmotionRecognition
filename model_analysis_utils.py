@@ -7,6 +7,12 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 def plot_prediction_matrix(y_true, y_pred, cmap=plt.cm.Blues):
+    '''
+    :param y_true: True labels 
+    :param y_pred: Predicted labels
+    :param cmap: default matrix color to be plotted
+    :return: Genrates matrix image plot
+    '''
     labels = ['angry', 'fearful', 'happy', 'sad', 'surprised', 'neutral']
     cm = confusion_matrix(y_true, y_pred)
     fig = plt.figure(figsize=(6, 6))
@@ -27,8 +33,14 @@ def plot_prediction_matrix(y_true, y_pred, cmap=plt.cm.Blues):
     plt.xlabel('Predicted label')
     plt.show()
 
-def prediction_matrix(model, X_train, Y_train):
-    X_train = X_train.transpose((0, 2, 3, 1))
+def prediction_matrix(model, X, Y):
+    '''
+    :param model: loaded model
+    :param X: images data nd array
+    :param Y: labels data nd array
+    :return: matrix plot for predicted labels
+    '''
+    X = X.transpose((0, 2, 3, 1))
     print("start prediction")
     y_prob = []
 
@@ -36,7 +48,7 @@ def prediction_matrix(model, X_train, Y_train):
     batch_size = 100
     iterations = 35
     for i in range(0,iterations): # change iterations : each batch takes 100 images
-        batch = model.predict(X_train[i*batch_size:(i+1)*batch_size])
+        batch = model.predict(X[i*batch_size:(i+1)*batch_size])
         for batch_element in batch:
             y_prob.append(batch_element)
         print("images predicted ",(i+1)*batch_size)
@@ -45,12 +57,18 @@ def prediction_matrix(model, X_train, Y_train):
 
     #get max value from softmax output
     y_predicted = [np.argmax(prob) for prob in y_prob]
-    y_true = [np.argmax(true) for true in Y_train]
+    y_true = [np.argmax(true) for true in Y]
 
     #make sure the size of y_true and y_predicted to be same
     plot_prediction_matrix(y_true[0:batch_size*(iterations)], y_predicted, cmap=plt.cm.Oranges)
 
 def softmax_graph_for_sample_images(model, X_test, Y_test):
+    '''
+    :param model: loaded model
+    :param X_test: images data nd array
+    :param Y_test: labels data nd array
+    :return: created softmax histogram plot
+    '''
 
     # RaFD image data set
     #images_train = np.load("./RafD/RaFD_images_train.npy")
@@ -82,6 +100,12 @@ def softmax_graph_for_sample_images(model, X_test, Y_test):
     plt.show()
 
 def top2_accuracy(model, X_test, Y_test):
+    '''
+    :param model: loaded model
+    :param X_test: image data nd array
+    :param Y_test: label data nd array
+    :return: prints Top-2 accuracy for FERC test data set
+    '''
     X_test = X_test.transpose((0, 2, 3, 1))
     print("start testing")
 
