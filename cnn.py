@@ -2,11 +2,12 @@ import sys
 import tensorflow
 import tflearn
 from tflearn import *
-from util import getData
+from util import *
 
 EMOTIONS = ['angry', 'fearful', 'happy', 'sad', 'surprised', 'neutral']
 
-unit_values = []
+save_path = './SavedModels/model_ab_c/model_ab_c.tfl'
+model_id = 'emotion_recognition_ab_c'
 
 
 def network_model():
@@ -18,21 +19,23 @@ def network_model():
     network = input_data(placeholder=x, shape=[None, 48, 48, 1])
 
     '''
-    copy/import models from final_Models.txt or write your model
+    copy/import models from final_Models.txt or write your own model
     '''
-    conv_1 = conv_2d(network, 64, 5, activation='relu', bias=False)
-    # Residual blocks
-    res_1 = residual_bottleneck(conv_1, 3, 16, 64)
-    res_2 = residual_bottleneck(res_1, 1, 32, 128, downsample=True)
-    res_3 = residual_bottleneck(res_2, 2, 32, 128)
-    res_4 = residual_bottleneck(res_3, 1, 64, 256, downsample=True)
-    res_5 = residual_bottleneck(res_4, 2, 64, 256)
-    network = batch_normalization(res_5)
-    network = activation(network, 'relu')
-    network = global_avg_pool(network)
-    # Regression
-    fc_1 = fully_connected(network, 3072, activation='relu')
-    network = fully_connected(fc_1, len(EMOTIONS), activation='softmax')
+    conv_1 = conv_2d(network, 64, 5, activation='relu')
+    network = max_pool_2d(conv_1, 2, strides=2)
+    network = dropout(network, 0.5)
+    network = local_response_normalization(network)
+    conv_2 = conv_2d(network, 64, 5, activation='relu')
+    network = max_pool_2d(conv_2, 2, strides=2)
+    network = dropout(network, 0.5)
+    network = local_response_normalization(network)
+    conv_3 = conv_2d(network, 128, 5, activation='relu')
+    network = dropout(conv_3, 0.5)
+    fc_1 = fully_connected(network, 1024, activation='relu')
+    network = dropout(fc_1, 0.5)
+    fc_2 = fully_connected(network, 1024, activation='relu')
+    network = dropout(fc_2, 0.5)
+    network = fully_connected(network, len(EMOTIONS), activation='softmax')
 
     network = regression(network,
                          optimizer='adam',
@@ -50,15 +53,15 @@ def get_raw_network_model():
     return network_model()
 
 
-def get_saved_network_model(savepath='./SavedModels/model_resnet/model_resnet.tfl'):
+def get_saved_network_model(saved_path=save_path):
     """
     Loads specified network weights in the path
-    :param savepath: path of the saved model. Needed to load the model weights for predicting and to continue the 
+    :param saved_path: path of the saved model. Needed to load the model weights for predicting and to continue the 
     training of model
     :return: returns the model with weights
     """
     model = get_raw_network_model()
-    model.load(savepath)
+    model.load(saved_path)
     return model
 
 
@@ -69,27 +72,27 @@ def train(cont=False):
     network from starting
     :return: None
     """
-    x_train, y_train, x_valid, y_valid, y_test, y_test = getData()
-    x_train = x_train.transpose((0, 2, 3, 1))
+    x_train, y_train, x_valid, y_valid, y_test, y_test = get_data()
+    x_train = x_train.transpose((0, 2, 3, 1))  # changing array from [?,1,48,48] to [?,48,48,1]
     x_valid = x_valid.transpose((0, 2, 3, 1))
 
-    tensorflow.reset_default_graph()  # to reset the model graph. problem with loading the weights
+    tensorflow.reset_default_graph()  # reset the model graph. problem with loading the weights
     if cont:
-        model = get_saved_network_model()  # need to change back to getrawnetwork()
+        model = get_saved_network_model()
     else:
         model = get_raw_network_model()
     model.fit(
         x_train, y_train,
         validation_set=(x_valid, y_valid),
-        n_epoch=10,
-        batch_size=50,
+        n_epoch=50,
+        batch_size=100,
         shuffle=True,
         show_metric=True,
         snapshot_step=200,
         snapshot_epoch=True,
-        run_id='emotion_recognition_resnet'
+        run_id=model_id
     )
-    model.save('./SavedModels/model_resnet/model_resnet.tfl')
+    model.save(save_path)
 
 
 def test():
@@ -98,10 +101,10 @@ def test():
     Function to call for testing test_data of ferc data-set
     :return: None
     """
-    _, _, _, _, x_test, y_test = getData()  # need to test on different datasets
+    _, _, _, _, x_test, y_test = get_data()
     x_test = x_test.transpose((0, 2, 3, 1))
 
-    tensorflow.reset_default_graph()
+    tensorflow.reset_default_graph()  # reset the model graph. problem with loading the weights
 
     model = get_saved_network_model()
     score = model.evaluate(x_test, y_test, batch_size=50)
@@ -114,7 +117,7 @@ def predict(x):
     :param x: image in numpy array format . Needs to be in [1,1,48,48] dimension
     :return: returns an array of probabilities of each emotion
     """
-    tensorflow.reset_default_graph()
+    tensorflow.reset_default_graph()  # reset the model graph. problem with loading the weights
 
     model = get_saved_network_model()
     x = x.transpose((0, 2, 3, 1))

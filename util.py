@@ -10,84 +10,90 @@ Y_test_path = './FercData/test_label.npy'
 Ferc_csv = './FercData/fer2013.csv'
 
 
-def dense_to_one_hot(labels_dense, num_classes=7):
-    """Convert class labels from scalars to one-hot vectors."""
-    num_labels = labels_dense.shape[0]
+def one_hot(labels, num_classes=6):
+    """
+    :param labels: array of labels to be converted
+    :param num_classes: number of classes
+    :return: return one-hot label vector
+    """
+    num_labels = labels.shape[0]
     index_offset = np.arange(num_labels) * num_classes
     labels_one_hot = np.zeros((num_labels, num_classes))
-    labels_one_hot.flat[index_offset + labels_dense.ravel()] = 1
+    labels_one_hot.flat[index_offset + labels.ravel()] = 1
     return labels_one_hot
 
 
-def checkispresent():
+def check_if_present():
     if (os.path.isfile(X_train_path) and os.path.isfile(Y_train_path) and os.path.isfile(
             X_valid_path) and os.path.isfile(Y_valid_path) and os.path.isfile(X_test_path) and os.path.isfile(
-        Y_test_path)):
+          Y_test_path)):
         return True
     else:
         return False
 
 
-def getData():
-    if checkispresent() is False:
+def get_data():
+    """
+    :return: returns train, validation and test data-set in .npy format
+    """
+    if check_if_present() is False:
         print("Creating .npy files")
-        X_train, Y_train, X_valid, Y_valid, X_test, Y_test = getcsvdata()
+        x_train, y_train, x_valid, y_valid, x_test, y_test = get_csv_data()
 
-        N, D = X_train.shape
-        d = int(np.sqrt(D))
-        X_train = X_train.reshape(N, 1, d, d)
-        np.save(X_train_path, X_train)
-        np.save(Y_train_path, Y_train)
+        n, d = x_train.shape
+        d = int(np.sqrt(d))  # 784 -> 48
+        x_train = x_train.reshape(n, 1, d, d)
+        np.save(X_train_path, x_train)
+        np.save(Y_train_path, y_train)
 
-        N, D = X_valid.shape
-        d = int(np.sqrt(D))
-        X_valid = X_valid.reshape(N, 1, d, d)
-        np.save(X_valid_path, X_valid)
-        np.save(Y_valid_path, Y_valid)
+        n, d = x_valid.shape
+        d = int(np.sqrt(d))
+        x_valid = x_valid.reshape(n, 1, d, d)
+        np.save(X_valid_path, x_valid)
+        np.save(Y_valid_path, y_valid)
 
-        N, D = X_test.shape
-        d = int(np.sqrt(D))
-        X_test = X_test.reshape(N, 1, d, d)
-        np.save(X_test_path, X_test)
-        np.save(Y_test_path, Y_test)
+        n, d = x_test.shape
+        d = int(np.sqrt(d))
+        x_test = x_test.reshape(n, 1, d, d)
+        np.save(X_test_path, x_test)
+        np.save(Y_test_path, y_test)
 
     return np.load(X_train_path), np.load(Y_train_path), np.load(X_valid_path), np.load(Y_valid_path), np.load(
         X_test_path), np.load(Y_test_path)
 
 
-def getcsvdata():
-    Y_train = []
-    X_train = []
-    Y_valid = []
-    X_valid = []
-    Y_test = []
-    X_test = []
+def get_csv_data():
+    y_train = []
+    x_train = []
+    y_valid = []
+    x_valid = []
+    y_test = []
+    x_test = []
     first = True
     for line in open(Ferc_csv):
         if first:
             first = False
         else:
             row = line.split(',')
-            usage = row[2].rstrip()  # to remove '\n' at the end
-
+            usage = row[2].rstrip()  # remove '\n' at the end
             if row[0] != '0':
-                row[0] = int(row[0]) - 1
+                row[0] = int(row[0]) - 1  # merge disgust with anger and then shifting each emotion indexes
             if usage == 'Training':
-                Y_train.append(int(row[0]))
-                X_train.append([int(p) for p in row[1].split()])
+                y_train.append(int(row[0]))
+                x_train.append([int(p) for p in row[1].split()])
             if usage == 'PublicTest':
-                Y_valid.append(int(row[0]))
-                X_valid.append([int(p) for p in row[1].split()])
+                y_valid.append(int(row[0]))
+                x_valid.append([int(p) for p in row[1].split()])
             if usage == 'PrivateTest':
-                Y_test.append(int(row[0]))
-                X_test.append([int(p) for p in row[1].split()])
+                y_test.append(int(row[0]))
+                x_test.append([int(p) for p in row[1].split()])
 
-    X_train, Y_train = np.array(X_train) / 255.0, np.array(Y_train)
-    X_valid, Y_valid = np.array(X_valid) / 255.0, np.array(Y_valid)
-    X_test, Y_test = np.array(X_test) / 255.0, np.array(Y_test)
+    x_train, y_train = np.array(x_train) / 255.0, np.array(y_train)
+    x_valid, y_valid = np.array(x_valid) / 255.0, np.array(y_valid)
+    x_test, y_test = np.array(x_test) / 255.0, np.array(y_test)
 
-    Y_train = dense_to_one_hot(Y_train, 6)
-    Y_valid = dense_to_one_hot(Y_valid, 6)
-    Y_test = dense_to_one_hot(Y_test, 6)
+    y_train = one_hot(y_train)
+    y_valid = one_hot(y_valid)
+    y_test = one_hot(y_test)
 
-    return X_train, Y_train, X_valid, Y_valid, X_test, Y_test
+    return x_train, y_train, x_valid, y_valid, x_test, y_test
