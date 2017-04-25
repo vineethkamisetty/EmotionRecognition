@@ -41,7 +41,7 @@ def get_data():
         x_train, y_train, x_valid, y_valid, x_test, y_test = get_csv_data()
 
         n, d = x_train.shape
-        d = int(np.sqrt(d))  # 784 -> 48
+        d = int(np.sqrt(d))  # 2304 -> 48
         x_train = x_train.reshape(n, 1, d, d)
         np.save(X_train_path, x_train)
         np.save(Y_train_path, y_train)

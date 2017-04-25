@@ -9,9 +9,9 @@ cascade_classifier = cv2.CascadeClassifier("haarcascade_frontalface_default.xml"
 
 def format_image(image):
     """
-    Takes image from camera app and extracts face, finally converst it into 48x48 gray scale image
+    Takes image from camera app and extracts largest face, finally convert it into 48x48 gray scale image
     :param image: image frame from camera
-    :return: converted image
+    :return: converted image with face
     """
     if len(image.shape) > 2 and image.shape[2] == 3:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
