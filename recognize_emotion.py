@@ -61,8 +61,7 @@ if __name__ == "__main__":
         if result_softmax is not None:
             emoji = emojis[numpy.argmax(result_softmax[0])]  # get max index of softmax values
             for c in range(0, 3):
-                frame[200:320, 10:130, c] = emoji[:, :, c] * (emoji[:, :, 3] / 255.0) + frame[200:320, 10:130, c] * (
-                    1.0 - emoji[:, :, 3] / 255.0)
+                frame[20:140, 500:620, c] = emoji[:, :, c] * (emoji[:, :, 3] / 255.0) + frame[20:140, 500:620, c] * (1.0 - emoji[:, :, 3] / 255.0)
         cv2.imshow('Video', frame)
 
         if cv2.waitKey(1) & 0xFF == ord(' '):
