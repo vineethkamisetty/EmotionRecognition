@@ -1,11 +1,12 @@
-In this project we have developed a Deep Convolutional Neural Network model for Facial Expression Recognition. Every facial expression is classified into one of the six expressions considered for this project. We implemented convolution-reLU-fully connected layers followed by softmax. To reduce the overfitting of models, we used dropout and local response normalization. To recognize emotions at real time we capture live images from video frames and this image is sent to the model for prediction, then the model outputs the emotion. The test accuracy obtained is 60.1%.
+In this project we have developed a Deep Convolutional Neural Network model for Facial Expression Recognition. Every facial expression is classified into one of the six expressions considered for this project. We implemented convolution-reLU-fully connected layers followed by softmax. To reduce the overfitting of models, we used dropout and local response normalization. To recognize emotions at real time we capture live images from video frames and this image is sent to the model for prediction, then the model outputs the emotion. The test accuracy obtained is 60.1%.<br />
 
-DataSets: FERC-2013(Facial Expression Recognition Challenge) and RaFD(Radboud Faces Database)
-FERC contains i)   28,709 Training images
-			  ii)  7,178 Private Test images	
-			  iii) 7,178 Public Test images
+DataSets: FERC-2013(Facial Expression Recognition Challenge) and RaFD(Radboud Faces Database) <br />
+FERC contains <br />
+i)   28,709 Training images <br />
+ii)  3589 Private Test images <br />
+iii) 3589 Public Test images <br />
 
-Installation Dependencies:
+Installation Dependencies: <br />
 
 1) Python 3.5
 2) Tensorflow 1.0

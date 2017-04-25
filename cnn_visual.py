@@ -16,31 +16,26 @@ network = input_data(placeholder=x, shape=[None, 48, 48, 1])
     copy/import models from final_Models.txt or write your model
 '''
 
-conv_1 = conv_2d(network, 32, 3, activation='relu')
-conv_2 = conv_2d(conv_1, 32, 5, activation='relu')
+conv_1 = conv_2d(network, 64, 5, activation='relu')
+network = max_pool_2d(conv_1, 2, strides=2)
+network = dropout(network, 0.5)
+network = local_response_normalization(network)
+conv_2 = conv_2d(network, 64, 5, activation='relu')
 network = max_pool_2d(conv_2, 2, strides=2)
-network = dropout(network, 0.3)
+network = dropout(network, 0.5)
 network = local_response_normalization(network)
-conv_3 = conv_2d(network, 64, 3, activation='relu')
-conv_4 = conv_2d(conv_3, 64, 5, activation='relu')
-network = max_pool_2d(conv_4, 2, strides=2)
-network = dropout(network, 0.3)
-network = local_response_normalization(network)
-conv_5 = conv_2d(network, 128, 3, activation='relu')
-conv_6 = conv_2d(conv_5, 128, 5, activation='relu')
-network = max_pool_2d(conv_6, 2, strides=2)
-network = dropout(network, 0.3)
-network = local_response_normalization(network)
+conv_3 = conv_2d(network, 128, 5, activation='relu')
+network = dropout(conv_3, 0.5)
 fc_1 = fully_connected(network, 1024, activation='relu')
-network = dropout(fc_1, 0.7)
+network = dropout(fc_1, 0.5)
 fc_2 = fully_connected(network, 1024, activation='relu')
-network = dropout(fc_2, 0.7)
+network = dropout(fc_2, 0.5)
 network = fully_connected(network, len(EMOTIONS), activation='softmax')
 
 network = regression(network,
                      optimizer='adam',
                      loss='categorical_crossentropy',
-                     learning_rate=0.001)  # need to check with different learning rate
+                     learning_rate=0.001)
 
 model = tflearn.DNN(network, tensorboard_verbose=3)
 
@@ -48,7 +43,7 @@ sess = tensorflow.Session()
 init = tensorflow.global_variables_initializer()
 sess.run(init)
 
-save_path = './SavedModels/model_A/model_A.tfl'
+save_path = './SavedModels/model_C/model_C.tfl'
 model.load(save_path)
 
 
@@ -69,6 +64,6 @@ def plot(layer, img):
         plt.tight_layout()
     plt.show()
 
-
+# numpy representation of the image
 image = X_valid[0:1, :, :, :].transpose((0, 2, 3, 1))  # converting into [1,48,48,1] dimensions
 plot(conv_2, image)

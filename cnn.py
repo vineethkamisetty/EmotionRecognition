@@ -6,8 +6,8 @@ from util import *
 
 EMOTIONS = ['angry', 'fearful', 'happy', 'sad', 'surprised', 'neutral']
 
-save_path = './SavedModels/model_ab_c/model_ab_c.tfl'
-model_id = 'emotion_recognition_ab_c'
+save_path = './SavedModels/model_C/model_C.tfl'
+model_id = 'emotion_recognition_C'
 
 
 def network_model():
@@ -40,7 +40,7 @@ def network_model():
     network = regression(network,
                          optimizer='adam',
                          loss='categorical_crossentropy',
-                         learning_rate=0.001)  # need to check with different learning rate
+                         learning_rate=0.001)
 
     model = tflearn.DNN(network, tensorboard_verbose=3)
     return model
@@ -126,6 +126,57 @@ def predict(x):
     return prediction
 
 
+def rafd_test():
+    """
+    Testing RafD data-set and print accuracy
+    :return: None
+    """
+    x_test = np.load('./RafD/RAFD_images.npy')
+    y_test = np.load('./RafD/RAFD_labels.npy')
+
+    tensorflow.reset_default_graph()  # reset the model graph. problem with loading the weights
+    x_test = x_test[1000:]
+    y_test = y_test[1000:]
+
+    model = get_saved_network_model(saved_path='./SavedModels/model_C_rafd/model_C_rafd.tfl')
+
+    score = model.evaluate(x_test.transpose((0, 2, 3, 1)), y_test, batch_size=50)
+    print(score)
+    print('Test accuracy: %0.4f%%' % (score[0] * 100))
+
+
+def rafd_train():
+    """
+    Testing RafD data-set and print accuracy
+    :return: None
+    """
+    x_test = np.load('./RafD/RAFD_images.npy')
+    y_test = np.load('./RafD/RAFD_labels.npy')
+    x_test = x_test[0:1000]
+    y_test = y_test[0:1000]
+    print(x_test.shape)
+    print(y_test.shape)
+
+    tensorflow.reset_default_graph()  # reset the model graph. problem with loading the weights
+
+    x_train = x_test.transpose((0, 2, 3, 1))  # changing array from [?,1,48,48] to [?,48,48,1]
+
+    tensorflow.reset_default_graph()  # reset the model graph. problem with loading the weights
+    model = get_saved_network_model()
+
+    model.fit(
+        x_train, y_test,
+        n_epoch=20,
+        batch_size=100,
+        shuffle=True,
+        show_metric=True,
+        snapshot_step=200,
+        snapshot_epoch=True,
+        run_id=model_id + '_rafd'
+    )
+    model.save('./SavedModels/model_C_rafd/model_C_rafd.tfl')
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         train()
@@ -135,5 +186,9 @@ if __name__ == "__main__":
             train(cont=True)
         else:
             train()
-    elif sys.argv[1] == 'test':
         test()
+    elif sys.argv[1] == 'rafd_test':
+        rafd_test()
+    elif sys.argv[1] == 'rafd_train':
+        rafd_train()
+        rafd_test()
